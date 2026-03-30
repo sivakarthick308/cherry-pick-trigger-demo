@@ -254,10 +254,13 @@
 
     <!-- Cyber Footer -->
     <footer class="w-full px-6 py-3 bg-black/80 border-t border-fuchsia-500/30 flex flex-col md:flex-row items-center justify-between z-50 shrink-0 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-        <div>NET_STATUS: <span class="text-cyan-400">OPTIMAL</span></div>
-        <div class="flex items-center gap-6 mt-2 md:mt-0">
-            <span class="text-fuchsia-400">V.3.1.99</span>
-            <span class="hover:text-cyan-400 cursor-pointer">ENCRYPTED</span>
+        <div>NET_STATUS: <span class="text-cyan-400 animate-pulse">OPTIMAL</span></div>
+        <div class="flex items-center gap-4 sm:gap-6 mt-3 md:mt-0">
+            <span class="text-fuchsia-400 hidden sm:block">V.3.1.99</span>
+            <span class="hover:text-cyan-400 cursor-pointer hidden sm:block">ENCRYPTED</span>
+            <button onclick="alert('Running System Diagnostics...\\n\\nAll subroutines nominal.\\nFirewall intact.')" class="px-4 py-1.5 border border-cyan-500 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-400 hover:text-black hover:shadow-[0_0_10px_rgba(6,182,212,0.5)] transition-all font-bold tracking-widest uppercase">
+                Diagnostics
+            </button>
         </div>
     </footer>
 
