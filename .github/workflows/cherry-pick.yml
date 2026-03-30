@@ -1,4 +1,4 @@
-name: Auto Cherry-Pick to Master
+name: Auto Cherry-Pick to Main
 
 on:
   pull_request:
@@ -8,12 +8,12 @@ on:
 
 jobs:
   cherry_pick:
-    name: Cherry-Pick to Master
+    name: Cherry-Pick to Main
     # Run ONLY if the PR was merged (not just closed without merging) 
     # AND the description contains the specific trigger command
     if: >
       github.event.pull_request.merged == true && 
-      contains(github.event.pull_request.body, '/cherry-pick-master')
+      contains(github.event.pull_request.body, '/cherry-pick-main')
     runs-on: ubuntu-latest
 
     permissions:
@@ -35,13 +35,13 @@ jobs:
         id: cherry_pick
         run: |
           # 1. Provide a unique branch name for the cherry-pick
-          BRANCH_NAME="cherry-pick-pr-${{ github.event.pull_request.number }}-to-master"
+          BRANCH_NAME="cherry-pick-pr-${{ github.event.pull_request.number }}-to-main"
           
-          # 2. Fetch the target master branch
-          git fetch origin master
+          # 2. Fetch the target main branch
+          git fetch origin main
           
-          # 3. Create and switch to a new branch targeted at master
-          git checkout -b $BRANCH_NAME origin/master
+          # 3. Create and switch to a new branch targeted at main
+          git checkout -b $BRANCH_NAME origin/main
           
           # 4. Cherry-pick the merge commit from the closed PR
           # '-m 1' is used to specify the mainline because the commit is a merge commit
@@ -66,9 +66,9 @@ jobs:
         run: |
           # Use GitHub CLI to open a pull request and assign the user for review
           gh pr create \
-            --title "🤖 Auto Cherry-pick: PR #${{ github.event.pull_request.number }} to master" \
-            --body "Automated cherry-pick of #${{ github.event.pull_request.number }} into master. Triggered by keyword in the original PR description." \
-            --base master \
+            --title "🤖 Auto Cherry-pick: PR #${{ github.event.pull_request.number }} to main" \
+            --body "Automated cherry-pick of #${{ github.event.pull_request.number }} into main. Triggered by keyword in the original PR description." \
+            --base main \
             --head ${{ steps.cherry_pick.outputs.branch }} \
             --reviewer "${{ github.actor }}" \
             --assignee "${{ github.actor }}"
