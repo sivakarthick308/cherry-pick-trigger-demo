@@ -1,0 +1,74 @@
+name: Auto Cherry-Pick to Master
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'release' # Triggers when a PR targeting the 'release' branch is closed
+
+jobs:
+  cherry_pick:
+    name: Cherry-Pick to Master
+    # Run ONLY if the PR was merged (not just closed without merging) 
+    # AND the description contains the specific trigger command
+    if: >
+      github.event.pull_request.merged == true && 
+      contains(github.event.pull_request.body, '/cherry-pick-master')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # We need the full history to fetch both branches and perform the cherry-pick
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Perform Cherry-Pick and Create feature branch
+        id: cherry_pick
+        run: |
+          # 1. Provide a unique branch name for the cherry-pick
+          BRANCH_NAME="cherry-pick-pr-${{ github.event.pull_request.number }}-to-master"
+          
+          # 2. Fetch the target master branch
+          git fetch origin master
+          
+          # 3. Create and switch to a new branch targeted at master
+          git checkout -b $BRANCH_NAME origin/master
+          
+          # 4. Cherry-pick the merge commit from the closed PR
+          # '-m 1' is used to specify the mainline because the commit is a merge commit
+          echo "Cherry picking commit ${{ github.sha }} to branch $BRANCH_NAME..."
+          git cherry-pick -m 1 ${{ github.sha }} || {
+            echo "::error::Cherry-pick resulted in conflicts. Please resolve manually."
+            # Abort the process safely if there is a git conflict
+            git cherry-pick --abort
+            exit 1
+          }
+
+          # 5. Push the new branch to the repository
+          git push -u origin $BRANCH_NAME
+          
+          # 6. Save the branch name as an output variable for the next step
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request to Master
+        env:
+          # Standard token provided by Actions to create a PR
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Use GitHub CLI to open a pull request and assign the user for review
+          gh pr create \
+            --title "🤖 Auto Cherry-pick: PR #${{ github.event.pull_request.number }} to master" \
+            --body "Automated cherry-pick of #${{ github.event.pull_request.number }} into master. Triggered by keyword in the original PR description." \
+            --base master \
+            --head ${{ steps.cherry_pick.outputs.branch }} \
+            --reviewer "${{ github.actor }}" \
+            --assignee "${{ github.actor }}"
