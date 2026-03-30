@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium AI Chatbot</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS Latest (v4) -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Light mode body background override */
+        :root:not(.dark) body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 40px rgba(99, 102, 241, 0.1);
+        }
+
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.15);
+        }
+        
+        .chat-bubble-ai {
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-bubble-user {
+            border-bottom-right-radius: 4px;
+        }
+        
+        .typing-indicator span {
+            animation: blink 1.4s infinite both;
+            height: 6px;
+            width: 6px;
+            background: currentColor;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+        }
+        
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes blink {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        /* Message pop animation */
+        .message-appear {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
+            transform-origin: bottom center;
+        }
+
+        @keyframes popIn {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased text-slate-800 dark:text-slate-100 p-4 sm:p-8 relative">
+
+    <!-- Ambient Background Orbs -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-[-15%] xl:top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/20 dark:bg-indigo-600/30 blur-[120px] mix-blend-screen dark:mix-blend-lighten"></div>
+        <div class="absolute bottom-[-15%] xl:bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-fuchsia-500/20 dark:bg-purple-600/30 blur-[120px] mix-blend-screen dark:mix-blend-lighten"></div>
+    </div>
+
+    <!-- Main Chat UI Container -->
+    <div class="w-full max-w-md h-[85vh] max-h-[750px] min-h-[500px] glass-panel rounded-3xl flex flex-col overflow-hidden relative transition-all duration-300 transform z-10">
+        
+        <!-- Header -->
+        <div class="w-full px-6 py-5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-white/20 dark:border-white/5 flex items-center justify-between shrink-0 shadow-sm">
+            <div class="flex items-center gap-3.5">
+                <div class="relative">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 dark:shadow-indigo-500/20 p-[1px]">
+                        <div class="w-full h-full rounded-[15px] bg-white/20 dark:bg-black/20 backdrop-blur-sm flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Online indicator -->
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 border-[2.5px] border-[#f8fafc] dark:border-[#1e293b] rounded-full shadow-sm"></div>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-800 dark:text-white">Neo Assistant</h1>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Online</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-1">
+                <!-- Theme Toggle -->
+                <button onclick="document.documentElement.classList.toggle('dark')" class="p-2.5 rounded-full hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors text-slate-500 dark:text-slate-300 focus:outline-none" title="Toggle Theme">
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <!-- Close/Menu Button -->
+                <button class="p-2.5 rounded-full hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors text-slate-500 dark:text-slate-300 focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 scroll-smooth hide-scrollbar relative z-0" id="chat-container">
+            
+            <!-- Welcome Time -->
+            <div class="flex justify-center mt-2 mb-4">
+                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-white/50 dark:bg-slate-800/50 px-4 py-1.5 rounded-full shadow-sm backdrop-blur-sm border border-white/20 dark:border-white/5">Today</span>
+            </div>
+
+            <!-- AI Message -->
+            <div class="flex items-end gap-3 message-appear">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex-shrink-0 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="group relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-4.5 py-3.5 rounded-2xl chat-bubble-ai shadow-sm border border-slate-100 dark:border-slate-700/50 max-w-[85%] sm:max-w-[75%] text-[15px] leading-relaxed">
+                    Hello! I'm Neo, your advanced AI assistant. I'm ready to help you build something amazing today. 🚀
+                </div>
+            </div>
+
+            <!-- User Message -->
+            <div class="flex items-end gap-3 justify-end message-appear" style="animation-delay: 0.15s">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 text-white px-4.5 py-3.5 rounded-2xl chat-bubble-user shadow-md shadow-indigo-500/20 max-w-[85%] sm:max-w-[75%] text-[15px] leading-relaxed">
+                    Can you help me design a stunning chat interface for my new website? It needs to look premium.
+                </div>
+            </div>
+
+            <!-- AI Message -->
+            <div class="flex items-end gap-3 message-appear" style="animation-delay: 0.3s">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex-shrink-0 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-4.5 py-3.5 rounded-2xl chat-bubble-ai shadow-sm border border-slate-100 dark:border-slate-700/50 max-w-[85%] sm:max-w-[75%] text-[15px] leading-relaxed">
+                    <p>Absolutely! We can craft a gorgeous layout using high-fidelity elements like glassmorphism, subtle glowing gradients, and smooth micro-animations.</p>
+                    
+                    <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50 flex flex-col gap-2">
+                        <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Select a Style</span>
+                        
+                        <button class="flex items-center justify-between w-full px-4 py-2.5 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center">
+                                    <span class="w-2 h-2 rounded-full bg-white"></span>
+                                </div>
+                                <span class="font-medium text-sm">Dark & Sleek</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+
+                        <button class="flex items-center justify-between w-full px-4 py-2.5 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-md transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center">
+                                    <span class="w-2 h-2 rounded-full bg-slate-800"></span>
+                                </div>
+                                <span class="font-medium text-sm">Light & Clean</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator (Hidden by default) -->
+            <div class="flex items-end gap-3 message-appear" id="typing-indicator" style="display: none;">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex-shrink-0 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-400 dark:text-slate-500 px-5 py-4 rounded-2xl chat-bubble-ai shadow-sm border border-slate-100 dark:border-slate-700/50">
+                    <div class="typing-indicator flex items-center">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 sm:p-5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-t border-white/20 dark:border-white/5 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.02)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.1)]">
+            <form id="chat-form" class="relative flex items-center" onsubmit="event.preventDefault(); sendMessage();">
+                <button type="button" class="absolute left-1.5 p-2 text-slate-400 hover:text-indigo-500 transition-colors rounded-full focus:outline-none" title="Attach file">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                </button>
+                <input 
+                    type="text" 
+                    id="chat-input"
+                    placeholder="Message Neo..." 
+                    class="w-full bg-black/5 dark:bg-black/20 border border-transparent focus:border-indigo-500/30 dark:focus:border-indigo-500/30 text-slate-800 dark:text-slate-100 text-[15px] rounded-full pl-11 pr-14 py-3.5 focus:outline-none shadow-inner placeholder-slate-400 dark:placeholder-slate-500 transition-all font-medium"
+                    autocomplete="off"
+                >
+                <button type="submit" id="send-btn" class="absolute right-1.5 p-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-indigo-500/25 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 disabled:opacity-0 disabled:scale-75 disabled:pointer-events-none duration-200">
+                    <svg class="w-5 h-5 translate-x-[1px] translate-y-[-1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </form>
+            <div class="mt-3 flex justify-center items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <span class="text-[11px] text-slate-400 dark:text-slate-500 font-semibold tracking-wide">End-to-End Encrypted</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for demo interactivity -->
+    <script>
+        const input = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const container = document.getElementById('chat-container');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // Initially disable button
+        sendBtn.disabled = true;
+
+        input.addEventListener('input', () => {
+            sendBtn.disabled = input.value.trim().length === 0;
+        });
+
+        function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Add User Message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex items-end gap-3 justify-end message-appear';
+            userMsg.innerHTML = `
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 text-white px-4.5 py-3.5 rounded-2xl chat-bubble-user shadow-md shadow-indigo-500/20 max-w-[85%] sm:max-w-[75%] text-[15px] leading-relaxed">
+                    ${escapeHTML(text)}
+                </div>
+            `;
+            container.insertBefore(userMsg, typingIndicator);
+            
+            // Clear Input
+            input.value = '';
+            sendBtn.disabled = true;
+            
+            // Scroll to bottom
+            scrollToBottom();
+
+            // Show Typing Indicator
+            typingIndicator.style.display = 'flex';
+            scrollToBottom();
+
+            // Simulate AI Reply
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex items-end gap-3 message-appear';
+                aiMsg.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex-shrink-0 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-700 dark:text-slate-200 px-4.5 py-3.5 rounded-2xl chat-bubble-ai shadow-sm border border-slate-100 dark:border-slate-700/50 max-w-[85%] sm:max-w-[75%] text-[15px] leading-relaxed">
+                        I've received your message: <strong>"${escapeHTML(text)}"</strong>. <br><br>While I'm just a front-end UI right now, my design sure looks sleek! 😎
+                    </div>
+                `;
+                container.insertBefore(aiMsg, typingIndicator);
+                scrollToBottom();
+            }, 1200 + Math.random() * 800);
+        }
+
+        function scrollToBottom() {
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
