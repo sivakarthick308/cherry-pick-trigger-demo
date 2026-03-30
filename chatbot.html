@@ -95,9 +95,9 @@
         </div>
         
         <div class="hidden md:flex items-center gap-8">
-            <a href="#" class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Product</a>
-            <a href="#" class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Integrations</a>
-            <a href="#" class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Pricing</a>
+            <button id="nav-chat" onclick="switchView('chat')" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 transition-colors focus:outline-none">Chat</button>
+            <button id="nav-profile" onclick="switchView('profile')" class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus:outline-none">Profile</button>
+            <button class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus:outline-none cursor-not-allowed">Settings</button>
         </div>
         
         <div class="flex items-center gap-4">
@@ -117,8 +117,11 @@
         <div class="absolute bottom-[-15%] xl:bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-fuchsia-400/10 dark:bg-purple-600/30 blur-[120px] mix-blend-multiply dark:mix-blend-lighten"></div>
     </div>
 
-    <!-- Main Chat UI Container -->
-    <div class="w-full max-w-md h-[85vh] max-h-[750px] min-h-[500px] glass-panel rounded-3xl flex flex-col overflow-hidden relative transition-all duration-300 transform z-10">
+    <!-- Application Views Container -->
+    <div class="w-full h-full flex justify-center items-center relative z-10 w-full max-w-5xl">
+    
+    <!-- MAIN CHAT APP VIEW -->
+    <div id="view-chat" class="w-full max-w-md h-[85vh] max-h-[750px] min-h-[500px] glass-panel rounded-3xl flex flex-col overflow-hidden relative transition-all duration-300 transform">
         
         <!-- Header -->
         <div class="w-full px-6 py-5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-white/20 dark:border-white/5 flex items-center justify-between shrink-0 shadow-sm">
@@ -253,6 +256,79 @@
         </div>
     </div>
     
+    <!-- PROFILE SETTINGS VIEW -->
+    <div id="view-profile" class="hidden w-full max-w-3xl glass-panel rounded-3xl flex flex-col overflow-hidden relative transition-all duration-300 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] bg-white/70 dark:bg-slate-900/70 border border-white/40 dark:border-slate-700/50">
+        <div class="w-full px-8 py-6 bg-white/30 dark:bg-slate-800/30 backdrop-blur-xl border-b border-white/30 dark:border-white/5 flex items-center justify-between shrink-0 shadow-sm">
+             <h1 class="font-bold text-xl leading-tight tracking-tight text-slate-800 dark:text-white">Account Profile</h1>
+        </div>
+        <div class="p-8 sm:p-10 flex flex-col md:flex-row gap-10 items-center md:items-start overflow-y-auto hide-scrollbar">
+            <!-- Avatar Section -->
+            <div class="flex flex-col items-center gap-5 shrink-0">
+                <div class="relative group cursor-pointer">
+                    <div class="w-40 h-40 rounded-[2.5rem] p-1.5 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-xl transform group-hover:scale-105 transition-transform duration-300 rotate-3 group-hover:rotate-0">
+                        <img src="https://i.pravatar.cc/250?u=neo_user" alt="User Avatar" class="w-full h-full rounded-[2.2rem] object-cover border-[5px] border-white dark:border-slate-800 -rotate-3 group-hover:rotate-0 transition-transform duration-300" />
+                    </div>
+                </div>
+                <div class="text-center mt-1">
+                    <span class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white bg-gradient-to-r from-indigo-500 to-purple-500 shadow-md shadow-indigo-500/20 rounded-full inline-block transform hover:-translate-y-0.5 transition-all">Pro Member</span>
+                </div>
+            </div>
+
+            <!-- Profile Details Form -->
+            <div class="flex-1 w-full space-y-6">
+                <!-- Personal Info -->
+                <div class="p-6 bg-white/60 dark:bg-slate-800/60 rounded-3xl border border-white/50 dark:border-slate-700/50 shadow-sm transition-all hover:bg-white/80 dark:hover:bg-slate-800/80">
+                    <h3 class="text-[15px] font-bold text-slate-800 dark:text-white mb-5 flex items-center gap-2">
+                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </span>
+                        Personal Details
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">First Name</label>
+                            <input type="text" value="Alex" class="w-full bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-[15px] font-medium rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner hover:bg-white dark:hover:bg-slate-900" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">Last Name</label>
+                            <input type="text" value="Carter" class="w-full bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-[15px] font-medium rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner hover:bg-white dark:hover:bg-slate-900" />
+                        </div>
+                        <div class="space-y-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">Email Address</label>
+                            <input type="email" value="alex.carter@neochat.ai" class="w-full bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-[15px] font-medium rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner hover:bg-white dark:hover:bg-slate-900" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="px-6 py-5 bg-white/60 dark:bg-slate-800/60 rounded-3xl border border-white/50 dark:border-slate-700/50 shadow-sm hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all">
+                    <label class="flex items-center justify-between cursor-pointer group">
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-900/50 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-500 dark:group-hover:bg-indigo-500/20 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            </span>
+                            <div>
+                                <h4 class="text-[15px] font-bold text-slate-800 dark:text-white group-hover:text-indigo-500 transition-colors">Push Notifications</h4>
+                                <p class="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-1">Receive alerts for new messages instantly.</p>
+                            </div>
+                        </div>
+                        <div class="relative inline-flex items-center cursor-pointer ml-4">
+                            <input type="checkbox" value="" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-indigo-500"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3">
+                    <button class="px-7 py-3.5 text-sm font-bold text-white bg-slate-800 dark:bg-white dark:text-slate-900 hover:bg-slate-700 dark:hover:bg-slate-100 rounded-2xl transition-colors shadow-md transform hover:-translate-y-1 duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-500/20">Save Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- End Application Views Container -->
+    </div>
+    
     </main>
 
     <!-- Script for demo interactivity -->
@@ -261,6 +337,35 @@
         const sendBtn = document.getElementById('send-btn');
         const container = document.getElementById('chat-container');
         const typingIndicator = document.getElementById('typing-indicator');
+
+        // Navigation Logic
+        function switchView(viewId) {
+            const chatView = document.getElementById('view-chat');
+            const profileView = document.getElementById('view-profile');
+            const navChat = document.getElementById('nav-chat');
+            const navProfile = document.getElementById('nav-profile');
+
+            const activeColor = ['text-indigo-600', 'dark:text-indigo-400'];
+            const inactiveColor = ['text-slate-600', 'dark:text-slate-300'];
+
+            if(viewId === 'chat') {
+                chatView.classList.remove('hidden');
+                profileView.classList.add('hidden');
+                
+                navChat.classList.add(...activeColor);
+                navChat.classList.remove(...inactiveColor);
+                navProfile.classList.remove(...activeColor);
+                navProfile.classList.add(...inactiveColor);
+            } else if (viewId === 'profile') {
+                profileView.classList.remove('hidden');
+                chatView.classList.add('hidden');
+                
+                navProfile.classList.add(...activeColor);
+                navProfile.classList.remove(...inactiveColor);
+                navChat.classList.remove(...activeColor);
+                navChat.classList.add(...inactiveColor);
+            }
+        }
 
         // Initially disable button
         sendBtn.disabled = true;
