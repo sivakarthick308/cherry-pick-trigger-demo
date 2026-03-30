@@ -53,8 +53,8 @@ jobs:
             exit 1
           }
 
-          # 5. Push the new branch to the repository
-          git push -u origin $BRANCH_NAME
+          # 5. Push the new branch to the repository (force push in case of a retry)
+          git push -uf origin $BRANCH_NAME
           
           # 6. Save the branch name as an output variable for the next step
           echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
